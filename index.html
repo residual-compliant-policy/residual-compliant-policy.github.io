@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>Residual Compliant Policy</title>
+  <meta name="description" content="Residual Compliant Policy: Learning Compliant Policies from Few Demonstrations">
+  <meta name="author" content="Chunyu Jiang">
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="Residual Compliant Policy: Learning Compliant Policies from Few Demonstrations">
+  <meta property="og:description" content="Contact-rich manipulation with compliance made explicit at every stage: digital-twin teleoperation, Laplacian editing with trajectory optimization, and residual RL on an admittance controller.">
+  <!-- TODO: add og:url and og:image (1200x630) once the site is live -->
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400..800;1,400..800&family=Merriweather:ital,wght@0,300;0,400;0,700;0,900;1,300;1,400;1,700&family=Tinos:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+
+    :root {
+      --bg: #ffffff;
+      --band: #faf9f5;          /* header band */
+      --ink: #222222;
+      --muted: #666666;
+      --line: #e5e5e5;
+      --accent: #3d6a99;        /* links, "Compliant Policy" */
+      --name-muted: #9a958c;    /* "Residual" */
+      --body: 'Merriweather', Georgia, serif;
+      --heading: 'EB Garamond', Garamond, Georgia, serif;
+      --title: 'Times New Roman', Times, Tinos, serif;
+    }
+
+    html { -webkit-text-size-adjust: 100%; }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--ink);
+      font-family: var(--body);
+      font-size: 16px;
+      font-weight: 400;
+      line-height: 1.5;
+    }
+
+    a { color: var(--accent); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    a:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+
+    .sr-only {
+      position: absolute; width: 1px; height: 1px; overflow: hidden;
+      clip: rect(0 0 0 0); white-space: nowrap;
+    }
+
+    .container {
+      box-sizing: content-box;
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 0 15px;
+    }
+    @media (min-width: 640px) { .container { padding: 0 30px; } }
+    @media (min-width: 960px) { .container { padding: 0 40px; } }
+
+    /* ---------- Header band ---------- */
+    .masthead {
+      background: var(--band);
+      padding: 44px 0 36px;
+      text-align: center;
+    }
+
+    .title {
+      margin: 0;
+      font-family: var(--title);
+      font-weight: 700;
+      line-height: 1.25;
+      color: var(--ink);
+    }
+
+    .title-name {
+      display: inline-block;
+      margin-bottom: .35em;
+      padding: 0 .25em;
+      background: #fff;
+      border: 2px solid #fff;
+      border-radius: 10px;
+      font-variant: small-caps;
+      font-size: clamp(2.1rem, 5.4vw, 3.3rem);
+      line-height: 1.15;
+      letter-spacing: .01em;
+    }
+    .title-name .n1 { color: var(--name-muted); }
+    .title-name .n2 { color: var(--accent); }
+
+    .title-sub {
+      display: block;
+      font-size: clamp(1.35rem, 3.1vw, 2.05rem);
+    }
+
+    .venue {
+      display: inline-block;
+      margin-top: 14px;
+      padding: 0 10px;
+      background: var(--accent);
+      color: #fff;
+      font-size: .875rem;
+      line-height: 1.5;
+      text-transform: uppercase;
+      border-radius: 2px;
+    }
+
+    .authors { margin-top: 18px; }
+    .authors a { color: var(--ink); }
+    .authors a:hover { color: var(--accent); text-decoration: none; }
+    .affil { margin-top: 6px; }
+
+    .resources {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 4px 40px;
+      margin-top: 18px;
+    }
+
+    .res {
+      display: inline-flex;
+      align-items: center;
+      line-height: 40px;
+      color: var(--ink);
+      font-size: .875rem;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+    .res:hover { color: var(--ink); text-decoration: none; opacity: .75; }
+    .res svg { width: 2em; height: 2em; font-size: 14px; flex-shrink: 0; }
+    .res span { margin: 0 10px; }
+    .res-disabled { opacity: .45; cursor: default; }
+
+    /* ---------- Sections ---------- */
+    .section { padding: 40px 0 8px; }
+
+    .heading-line {
+      margin: 0 0 22px;
+      overflow: hidden;
+      text-align: center;
+      font-family: var(--heading);
+      font-size: 2rem;
+      font-weight: 700;
+      line-height: 1.3;
+      color: var(--ink);
+    }
+    .heading-line > span { display: inline-block; position: relative; }
+    .heading-line > span::before,
+    .heading-line > span::after {
+      content: '';
+      position: absolute;
+      top: calc(50% - 1px);
+      width: 2000px;
+      border-bottom: 1px solid var(--line);
+    }
+    .heading-line > span::before { right: 100%; margin-right: calc(5px + .3em); }
+    .heading-line > span::after { left: 100%; margin-left: calc(5px + .3em); }
+    @media (min-width: 960px) { .heading-line { font-size: 2.625rem; } }
+
+    .section p { margin: 0 0 20px; }
+
+    video, .figure img { display: block; width: 100%; height: auto; }
+
+    .figure { margin: 0; }
+    .caption {
+      margin-top: 14px;
+      font-size: .875rem;
+      line-height: 1.65;
+      color: var(--ink);
+    }
+    .caption strong { font-weight: 700; }
+    sub, sup { line-height: 0; }
+
+    /* Placeholders: visible only while the media file is missing */
+    .media-placeholder {
+      display: none;
+      aspect-ratio: 16 / 9;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      padding: 1rem;
+      text-align: center;
+      font-size: .875rem;
+      color: var(--muted);
+      background: var(--band);
+      border: 1px dashed #d5d2c8;
+    }
+    .media-placeholder code { font-size: .8rem; }
+    .figure .media-placeholder { aspect-ratio: 16 / 7; }
+    .is-empty video, .is-empty img { display: none; }
+    .is-empty .media-placeholder { display: flex; }
+
+    /* ---------- Footer ---------- */
+    .footer {
+      padding: 32px 0 28px;
+      text-align: center;
+      font-size: .875rem;
+    }
+  </style>
+</head>
+<body>
+
+<header class="masthead">
+  <div class="container">
+    <h1 class="title">
+      <span class="title-name"><span class="n1">Residual</span> <span class="n2">Compliant Policy</span></span><span class="sr-only">: </span>
+      <span class="title-sub">Learning Compliant Policies from Few Demonstrations</span>
+    </h1>
+
+    <!-- Uncomment once accepted: <span class="venue">ICRA'27</span> -->
+
+    <!-- TODO: add co-authors, e.g. <a href="...">Name</a><sup>1</sup> -->
+    <div class="authors">
+      <a href="https://chunyu-jiang.github.io/" target="_blank" rel="noopener">Chunyu Jiang</a>
+    </div>
+    <!-- <div class="affil"><sup>1</sup>Affiliation</div> -->
+
+    <div class="resources">
+      <!-- TODO: replace # with the arXiv / PDF link -->
+      <a class="res" href="#" target="_blank" rel="noopener">
+        <svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M3.5 0h6L14 4.5V15a1 1 0 0 1-1 1H3.5a1 1 0 0 1-1-1V1a1 1 0 0 1 1-1Zm5.5 1v4h4L9 1ZM5 9v1.2h6V9H5Zm0 2.6v1.2h6v-1.2H5Z"/></svg>
+        <span>Paper</span>
+      </a>
+      <span class="res res-disabled" aria-disabled="true">
+        <svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg>
+        <span>Code (Coming Soon)</span>
+      </span>
+    </div>
+  </div>
+</header>
+
+<main class="container">
+
+  <section class="section" id="results">
+    <h2 class="heading-line"><span>Results</span></h2>
+    <!-- Put the video at static/videos/results.mp4; the placeholder disappears automatically -->
+    <div class="video-wrap">
+      <video autoplay muted loop playsinline controls preload="metadata">
+        <source src="static/videos/results.mp4" type="video/mp4"
+                onerror="this.closest('.video-wrap').classList.add('is-empty')">
+      </video>
+      <div class="media-placeholder">
+        <span>Results video</span>
+        <code>static/videos/results.mp4</code>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="abstract">
+    <h2 class="heading-line"><span>Abstract</span></h2>
+    <p>
+      Contact-rich manipulation requires a robot to be precise in free space to establish the intended contacts, and compliant once in contact to avoid excessive forces. Imitation learning has proven effective for simpler manipulation tasks, but the compliance underlying a demonstration is not directly observable and is therefore difficult to infer from demonstration data alone. We present a framework that makes compliance explicit at every stage. During data collection, the operator teleoperates the real robot while a synchronized digital twin visualizes the error between the commanded reference and the achieved pose, making the current compliance visible, and selects between two discrete compliance modes. To generalize across object poses, we combine Laplacian editing, which retargets trajectories efficiently but is not physics-consistent during contact, with simulation-based trajectory optimization, which enforces physical plausibility but offers no manual guidance. Finally, a residual reinforcement learning policy refines the interaction forces by adjusting the reference pose of the underlying admittance controller. We evaluate on three flipping and pushing tasks on a Franka FR3 based on a total of 7 demonstrations across tasks. Our method is successful on all 40 out-of-distribution trials, compared to 33/40 and 24/40 for two baselines, with our base policy alone reaching 35/40.
+    </p>
+  </section>
+
+  <section class="section" id="method">
+    <h2 class="heading-line"><span>Method</span></h2>
+    <figure class="figure">
+      <!-- Put the figure at static/img/method.png; the placeholder disappears automatically -->
+      <div class="figure-wrap">
+        <img src="static/img/method.png" alt="Proposed compliance policy learning pipeline"
+             onerror="this.closest('.figure-wrap').classList.add('is-empty')">
+        <div class="media-placeholder">
+          <span>Method figure</span>
+          <code>static/img/method.png</code>
+        </div>
+      </div>
+      <figcaption class="caption">
+        <strong>Proposed compliance policy learning pipeline.</strong>
+        (a) The operator uses the haptic teleoperation device with our digital twin to collect <i>N</i><sub>h</sub> human demonstrations.
+        (b) The collected human demonstrations are augmented via free-space motion Laplacian editing and in-contact trajectory optimization given randomly sampled positions and poses of the object in simulation.
+        (c) A consistency flow matching-based policy is trained on the augmented dataset.
+        (d) A residual RL policy is trained upon the base policy in simulation.
+        (e) The system takes in the robot’s proprioception, stiffness of the admittance controller, external force feedback, and the object pose estimated by the digital twin to predict expected stiffness level and reference poses for implementing the task.
+      </figcaption>
+    </figure>
+  </section>
+
+</main>
+
+<footer class="footer">
+  Style adapted from the <a href="https://github.com/denkiwakame/academic-project-template" target="_blank" rel="noopener">Academic Project Page Template</a>
+</footer>
+
+</body>
+</html>
