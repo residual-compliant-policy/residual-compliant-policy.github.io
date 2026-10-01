@@ -25,8 +25,10 @@
       --ink: #222222;
       --muted: #666666;
       --line: #e5e5e5;
-      --accent: #3d6a99;        /* links, "Compliant Policy" */
-      --name-muted: #9a958c;    /* "Residual" */
+      --accent: #3d6a99;        /* links */
+      --title-residual:  #BA603C; /* "Residual" */
+      --title-compliant: #2A8484; /* "Compliant" */
+      --title-policy:    #486CB4; /* "Policy" */
       --body: 'Merriweather', Georgia, serif;
       --heading: 'EB Garamond', Garamond, Georgia, serif;
       --title: 'Times New Roman', Times, Tinos, serif;
@@ -89,8 +91,9 @@
       line-height: 1.15;
       letter-spacing: .01em;
     }
-    .title-name .n1 { color: var(--name-muted); }
-    .title-name .n2 { color: var(--accent); }
+    .title-name .n1 { color: var(--title-residual); }
+    .title-name .n2 { color: var(--title-compliant); }
+    .title-name .n3 { color: var(--title-policy); }
 
     .title-sub {
       display: block;
@@ -109,10 +112,18 @@
       border-radius: 2px;
     }
 
-    .authors { margin-top: 18px; }
+    .authors { margin-top: 18px; line-height: 1.6; }
     .authors a { color: var(--ink); }
     .authors a:hover { color: var(--accent); text-decoration: none; }
-    .affil { margin-top: 6px; }
+    .affil {
+      margin-top: 10px;
+      font-size: .95rem;
+      color: var(--ink);
+      line-height: 1.6;
+    }
+    .affil div { margin: 2px 0; }
+    .affil sup { margin-right: 2px; }
+    .eq-note { margin-top: 8px; font-size: .85rem; color: var(--muted); }
 
     .resources {
       display: flex;
@@ -209,17 +220,32 @@
 <header class="masthead">
   <div class="container">
     <h1 class="title">
-      <span class="title-name"><span class="n1">Residual</span> <span class="n2">Compliant Policy</span></span><span class="sr-only">: </span>
+      <span class="title-name"><span class="n1">Residual</span> <span class="n2">Compliant</span> <span class="n3">Policy</span></span><span class="sr-only">: </span>
       <span class="title-sub">Learning Compliant Policies from Few Demonstrations</span>
     </h1>
 
     <!-- Uncomment once accepted: <span class="venue">ICRA'27</span> -->
 
-    <!-- TODO: add co-authors, e.g. <a href="...">Name</a><sup>1</sup> -->
     <div class="authors">
-      <a href="https://chunyu-jiang.github.io/" target="_blank" rel="noopener">Chunyu Jiang</a>
+      <a href="https://chunyu-jiang.github.io/" target="_blank" rel="noopener">Chunyu Jiang</a><sup>1,2,*</sup>,
+      Yichen Cai<sup>2,*</sup>,
+      Shuai Li<sup>2</sup>,
+      Wenbin Sun<sup>3</sup>,
+      Jo&atilde;o Carvalho<sup>2,4</sup>,
+      Kostas Daniilidis<sup>1</sup>,
+      Oleg Arenz<sup>2</sup>,
+      Cristiana de Farias<sup>2</sup>,
+      Jan Peters<sup>2,4,5,6</sup>
     </div>
-    <!-- <div class="affil"><sup>1</sup>Affiliation</div> -->
+    <div class="affil">
+      <div><sup>1</sup>GRASP Lab, University of Pennsylvania, PA 19104, USA</div>
+      <div><sup>2</sup>Intelligent Autonomous Systems Lab, Technical University of Darmstadt, Germany</div>
+      <div><sup>3</sup>Karlsruhe Institute of Technology, Germany</div>
+      <div><sup>4</sup>German Research Center for AI (DFKI), SAIROL, Germany</div>
+      <div><sup>5</sup>Hessian.AI, Germany</div>
+      <div><sup>6</sup>Robotics Institute Germany (RIG)</div>
+    </div>
+    <div class="eq-note"><sup>*</sup>Equal contribution.</div>
 
     <div class="resources">
       <!-- TODO: replace # with the arXiv / PDF link -->
